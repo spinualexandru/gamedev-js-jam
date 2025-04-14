@@ -11,6 +11,16 @@ export default defineConfig({
             }
         },
     },
+    resolve: {
+        alias: {
+            '@': '/src',
+            "@Engine": '/src/engine',
+            "@Game": '/src/game',
+            "@Assets": '/public/assets',
+            "@Libs": '/src/libs',
+            "Scenes": '/src/scenes',
+        }
+    },
     server: {
         port: 8080
     }
