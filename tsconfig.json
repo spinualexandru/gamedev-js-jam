@@ -20,7 +20,18 @@
         "strictPropertyInitialization": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["src/*"],
+            "@Engine/*": ["src/engine/*"],
+            "@Game/*": ["src/game/*"],
+            "@Assets/*": ["public/assets/*"],
+            "@Libs/*": ["src/libs/*"],
+            "@Scenes/*": ["src/scenes/*"],
+            "@Constants/*": ["src/constants/*"],
+            "@Types/*": ["src/types/*"]
+        }
     },
     "include": [
         "src"

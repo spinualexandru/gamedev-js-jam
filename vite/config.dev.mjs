@@ -18,7 +18,9 @@ export default defineConfig({
             "@Game": '/src/game',
             "@Assets": '/public/assets',
             "@Libs": '/src/libs',
-            "Scenes": '/src/scenes',
+            "@Scenes": '/src/scenes',
+            "@Constants": '/src/constants',
+            "@Types": '/src/types',
         }
     },
     server: {
