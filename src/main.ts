@@ -1,24 +1,32 @@
-import { Game as MainGame } from "./scenes/Game";
-import { AUTO, Game, Scale, Types } from "phaser";
+import {Game as MainGame} from "./scenes/Game";
+import {Game, Scale, Types} from "phaser";
 
 const config: Types.Core.GameConfig = {
-  type: AUTO,
-  parent: "game-container",
-  antialias: true,
-  antialiasGL: true,
-  backgroundColor: "#ffffff",
-  pixelArt: false,
-  scale: {
-    mode: Scale.FIT,
-    autoCenter: Scale.CENTER_BOTH,
-  },
-  render: {
-    pixelArt: false,
+    type: Phaser.WEBGL,
+    parent: "game-container",
     antialias: true,
     antialiasGL: true,
-    roundPixels: false,
-  },
-  scene: [MainGame],
+    backgroundColor: "#ffffff",
+
+    pixelArt: false,
+    fps: {
+        target: 60,
+        forceSetTimeOut: true
+    },
+    scale: {
+        mode: Scale.FIT,
+        width: 1280,
+        height: 1024,
+        autoCenter: Scale.CENTER_BOTH,
+    },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false,
+            fps: 60,
+        }
+    },
+    scene: [MainGame],
 };
 
 export default new Game(config);

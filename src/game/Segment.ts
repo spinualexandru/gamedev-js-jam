@@ -1,79 +1,96 @@
-import { Colors } from "@/constants/colors";
-import { stringToHex } from "@/engine/colors";
+import {Vector2} from "@/types/Geometry";
+import {Orb} from "@Game/Orb.ts";
 
 export class Segment {
-  public color: Colors;
-  public angle: number;
-  public graphics: Phaser.GameObjects.Graphics;
-  public sprite: Phaser.GameObjects.Sprite;
+    public color: number;
+    public angle: number;
+    public graphics: Phaser.GameObjects.Graphics;
+    public sprite: Phaser.GameObjects.Sprite;
+    public target: Orb | null = null;
+    public angleStep: number = 0; // Add this property
 
-  constructor(
-    color: Colors,
-    angle: number = 0,
-    graphics: Phaser.GameObjects.Graphics
-  ) {
-    this.color = color;
-    this.angle = angle;
-    this.graphics = graphics;
-  }
+    #baseSize: Vector2 = {
+        x: 446,
+        y: 731,
+    };
 
-  public setAngle(angle: number): void {
-    this.angle = angle;
-  }
+    #baseScale: number = 8;
 
-  public getAngle(): number {
-    return this.angle;
-  }
+    constructor(
+        color: number,
+        angle: number = 0,
+        graphics: Phaser.GameObjects.Graphics
+    ) {
+        this.color = color;
+        this.angle = angle;
+        this.graphics = graphics;
+    }
 
-  public getColor(): Colors {
-    return this.color;
-  }
+    static create(
+        color: number,
+        angle: number,
+        x: number,
+        y: number,
+        scene: Phaser.Scene
+    ): Segment {
+        const graphics = scene.add.graphics();
+        graphics.setDepth(1);
+        const segment = new Segment(color, angle, graphics);
+        segment.createSegment(color, angle, x, y);
 
-  public setColor(color: Colors): void {
-    this.color = color;
-  }
-  public createSegment(
-    color: Colors,
-    angle: number,
-    x: number,
-    y: number
-  ): Phaser.GameObjects.Sprite {
-    const segmentSprite = this.graphics.scene.add.sprite(x, y, "segment");
+        return segment;
+    }
 
-    segmentSprite.setDisplaySize(446, 731);
-    segmentSprite.setOrigin(0.5, 0.5);
-    segmentSprite.setAngle(angle);
-    segmentSprite.setTint(stringToHex(color));
-    segmentSprite.setInteractive();
+    public setAngle(angle: number): void {
+        this.angle = angle;
+    }
 
-    const desiredWidth = 446 / 8;
-    const desiredHeight = 731 / 8;
-    segmentSprite.setDisplaySize(desiredWidth, desiredHeight);
+    public getAngle(): number {
+        return this.angle;
+    }
 
-    segmentSprite.on("pointerover", () => {
-      segmentSprite.setDisplaySize(desiredWidth * 1.2, desiredHeight * 1.2);
-    });
+    public getColor(): number {
+        return this.color;
+    }
 
-    segmentSprite.on("pointerout", () => {
-      segmentSprite.setDisplaySize(desiredWidth, desiredHeight);
-    });
+    public setColor(color: number): void {
+        this.color = color;
+    }
 
-    this.sprite = segmentSprite;
-    return segmentSprite;
-  }
+    public createSegment(
+        color: number,
+        angle: number,
+        x: number,
+        y: number
+    ): Phaser.GameObjects.Sprite {
+        const segmentSprite = this.graphics.scene.add.sprite(x, y, "segment");
+        this.sprite = segmentSprite;
 
-  static create(
-    color: Colors,
-    angle: number,
-    x: number,
-    y: number,
-    scene: Phaser.Scene
-  ): Segment {
-    const graphics = scene.add.graphics();
-    graphics.setDepth(1);
-    const segment = new Segment(color, angle, graphics);
-    segment.createSegment(color, angle, x, y);
+        const desiredWidth = this.#baseSize.x / this.#baseScale;
+        const desiredHeight = this.#baseSize.y / this.#baseScale;
 
-    return segment;
-  }
+        segmentSprite.setAngle(angle);
+        segmentSprite.setInteractive();
+        segmentSprite.setOrigin(0.5, 0.5);
+        segmentSprite.setTint(color);
+        this.setColor(color);
+        segmentSprite.setDisplaySize(desiredWidth, desiredHeight);
+
+        // Add physics body and set its size
+        this.graphics.scene.physics.add.existing(segmentSprite);
+        const body = segmentSprite.body as Phaser.Physics.Arcade.Body;
+
+        // Use smaller collision area for more precise collisions
+        const bodyWidth = desiredWidth * 0.8;
+        const bodyHeight = desiredHeight * 0.8;
+
+        body.setSize(bodyWidth, bodyHeight);
+        body.setOffset((desiredWidth - bodyWidth) / 2, (desiredHeight - bodyHeight) / 2);
+
+        // Debug visualization of physics body (remove in production)
+        // body.debugShowBody = true;
+        // body.debugBodyColor = 0xff0000;
+
+        return segmentSprite;
+    }
 }
